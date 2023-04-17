@@ -7,6 +7,7 @@ import android.app.job.JobService
 import android.content.ComponentName
 import android.content.Context
 import android.net.wifi.WifiManager
+import android.os.PowerManager
 import de.lolhens.resticui.config.FolderConfig
 import java.time.ZonedDateTime
 
@@ -78,9 +79,17 @@ class BackupService : JobService() {
         val createWifiLock = wifiManager.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "restic")
         createWifiLock.setReferenceCounted(false)
         createWifiLock.acquire()
+        val wakeLock: PowerManager.WakeLock =
+            (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ResticUI::WakelockBackup").apply {
+                    acquire()
+                }
+            }
+
 
         startBackup(applicationContext) {
             createWifiLock.release()
+            wakeLock.release()
             jobFinished(params, false)
         }
 
