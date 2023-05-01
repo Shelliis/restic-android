@@ -9,6 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.lolhens.resticui.databinding.ActivityMainBinding
+import de.lolhens.resticui.util.Logger
 import de.lolhens.resticui.util.PermissionManager
 
 class MainActivity : AppCompatActivity() {
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                 }
         }
 
+        val  logger = Logger(getApplicationContext());
         BackupService.schedule(applicationContext)
     }
 

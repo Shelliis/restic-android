@@ -24,6 +24,33 @@ class FolderEditFragment : Fragment() {
             Pair("Monthly", 30 * 24 * 60)
         )
 
+        val schedTimeNotBefore = arrayOf(
+            Pair(">00:00", 0 ),
+            Pair(">01:00", 1 ),
+            Pair(">02:00", 2 ),
+            Pair(">03:00", 3 ),
+            Pair(">04:00", 4 ),
+            Pair(">05:00", 5 ),
+            Pair(">06:00", 6 ),
+            Pair(">07:00", 7 ),
+            Pair(">08:00", 8 ),
+            Pair(">09:00", 9 ),
+            Pair(">10:00", 10 ),
+            Pair(">11:00", 11 ),
+            Pair(">12:00", 12 ),
+            Pair(">13:00", 13 ),
+            Pair(">14:00", 14 ),
+            Pair(">15:00", 15 ),
+            Pair(">16:00", 16 ),
+            Pair(">17:00", 17 ),
+            Pair(">18:00", 18 ),
+            Pair(">19:00", 19 ),
+            Pair(">20:00", 20 ),
+            Pair(">21:00", 21 ),
+            Pair(">22:00", 22 ),
+            Pair(">23:00", 23 ),
+        )
+
         val retainProfiles = arrayOf(
             -1,
             1,
@@ -83,6 +110,14 @@ class FolderEditFragment : Fragment() {
         )
         binding.spinnerSchedule.setSelection(1)
 
+        binding.spinnerSchedNotBefore.adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_dropdown_item,
+            schedTimeNotBefore.map { it.first }
+        )
+        binding.spinnerSchedNotBefore.setSelection(0)
+        binding.spinnerSchedNotBefore.setSelection(0)
+
         binding.spinnerRetainWithin.adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_dropdown_item,
@@ -92,7 +127,7 @@ class FolderEditFragment : Fragment() {
                 )
             }
         )
-        binding.spinnerRetainWithin.setSelection(0)
+        binding.spinnerRetainWithin.setSelection(1)
 
         val directoryChooser = DirectoryChooser.newInstance()
 
@@ -108,6 +143,7 @@ class FolderEditFragment : Fragment() {
             binding.spinnerRepo.setSelection(backupManager.config.repos.indexOfFirst { it.base.id == folderRepo.base.id })
             binding.editFolder.setText(folder.path.path)
             binding.spinnerSchedule.setSelection(schedules.indexOfFirst { it.first == folder.schedule })
+            binding.spinnerSchedNotBefore.setSelection(schedTimeNotBefore.indexOfFirst { it.first == folder.schedTimeNotBefore })
             val scheduleIndex = retainProfiles.indexOfFirst {
                 it.toLong() == folder.keepWithin?.toHours()
             }
@@ -131,6 +167,7 @@ class FolderEditFragment : Fragment() {
                     else backupManager.config.repos.find { it.base.name == selectedRepoName }
                 val path = binding.editFolder.text.toString()
                 val schedule = binding.spinnerSchedule.selectedItem?.toString()
+                val schedTimeNotBefore = binding.spinnerSchedNotBefore.selectedItem?.toString()
                 val keepWithin =
                     if (retainProfiles[binding.spinnerRetainWithin.selectedItemPosition] < 0) null
                     else Duration.ofHours(retainProfiles[binding.spinnerRetainWithin.selectedItemPosition].toLong())
@@ -138,7 +175,8 @@ class FolderEditFragment : Fragment() {
                 if (
                     repo != null &&
                     path.isNotEmpty() &&
-                    schedule != null
+                    schedule != null &&
+                    schedTimeNotBefore != null
                 ) {
                     val prevFolder = backupManager.config.folders.find { it.id == folderId }
 
@@ -147,6 +185,7 @@ class FolderEditFragment : Fragment() {
                         repo.base.id,
                         File(path),
                         schedule,
+                        schedTimeNotBefore,
                         prevFolder?.keepLast,
                         keepWithin,
                         prevFolder?.history ?: emptyList()

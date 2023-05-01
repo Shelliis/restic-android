@@ -104,7 +104,7 @@ class BackupManager private constructor(context: Context) {
             activeBackup.inProgress -> {
                 // reduce number of notification updates
                 val nowMillis = System.currentTimeMillis()
-                if ((nowMillis - lastMillis) < 300)
+                if ((nowMillis - lastMillis) < 500)
                     return
                 else
                     lastMillis = nowMillis

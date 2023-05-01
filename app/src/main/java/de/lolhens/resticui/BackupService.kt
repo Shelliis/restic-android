@@ -9,21 +9,25 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.PowerManager
 import de.lolhens.resticui.config.FolderConfig
+import de.lolhens.resticui.util.Logger
 import java.time.ZonedDateTime
 
 class BackupService : JobService() {
     companion object {
+        val TAG = "JobService"
         fun schedule(context: Context) {
             val jobScheduler = context.getSystemService(JobScheduler::class.java)
             //jobScheduler.cancel(0)
-            println("LIST JOBS:")
-            //jobScheduler.
+            // println("LIST JOBS:")
+            Logger.d( TAG, "LIST JOBS:")
             val contains = jobScheduler.allPendingJobs.any { job ->
                 val name = job.service.className
-                println(name)
+                // println(name)
+                Logger.d(TAG,"> " + name)
                 name == BackupService::class.java.name
             }
-            println(contains)
+            // println(contains)
+            Logger.d(TAG, contains.toString())
             if (!contains) {
                 val serviceComponent = ComponentName(context, BackupService::class.java)
                 val builder = JobInfo.Builder(0, serviceComponent)
@@ -35,9 +39,20 @@ class BackupService : JobService() {
                 builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                 //builder.setRequiresCharging(true)
                 jobScheduler.schedule(builder.build())
+                Logger.d(TAG,"Scheduled periodic!" )
+
+                val builderInm = JobInfo.Builder(1, serviceComponent)
+                builderInm.setPersisted(false)
+                builderInm.setMinimumLatency(10 * 1000); // wait at least
+                builderInm.setOverrideDeadline(5 * 1000); // maximum delay
+
+                builderInm.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                jobScheduler.schedule(builderInm.build())
+                Logger.d(TAG,"Scheduled inmediate start (10sec)!" )
             }
             jobScheduler.allPendingJobs.forEach { job ->
-                println(job.service.className)
+                // println(job.service.className)
+                Logger.d(TAG,job.service.className + " " + job.id)
             }
         }
 
@@ -49,6 +64,7 @@ class BackupService : JobService() {
                     if (callback != null) callback()
                 } else {
                     val folder = folders.first()
+                    Logger.d("nextFolder", folder.path.toString());
                     fun next() = nextFolder(folders.drop(1), callback)
 
                     val now = ZonedDateTime.now()

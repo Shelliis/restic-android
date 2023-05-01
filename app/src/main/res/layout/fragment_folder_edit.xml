@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_folder_edit"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -18,6 +19,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Spinner
+        android:id="@+id/spinner_repo"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_repo" />
+
     <TextView
         android:id="@+id/text_folder"
         android:layout_width="0dp"
@@ -30,64 +41,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner_repo" />
-
-    <TextView
-        android:id="@+id/text_schedule"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/text_schedule"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_folder" />
-
-    <TextView
-        android:id="@+id/text_retain"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/text_retain"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_schedule" />
-
-    <Spinner
-        android:id="@+id/spinner_repo"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_repo" />
-
-    <Spinner
-        android:id="@+id/spinner_schedule"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_schedule" />
-
-    <Spinner
-        android:id="@+id/spinner_retain_within"
-        android:layout_width="0dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_retain" />
 
     <EditText
         android:id="@+id/edit_folder"
@@ -109,5 +62,66 @@
         android:text="@string/button_browse"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_folder" />
+
+    <TextView
+        android:id="@+id/text_schedule"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/text_schedule"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_folder" />
+
+    <LinearLayout
+        android:id="@+id/text_schedule_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/text_schedule">
+
+        <Spinner
+            android:id="@+id/spinner_schedule"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp" />
+
+        <Spinner
+            android:id="@+id/spinner_schedNotBefore"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_retain"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/text_retain"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_schedule_layout" />
+
+    <Spinner
+        android:id="@+id/spinner_retain_within"
+        android:layout_width="0dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_retain" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -67,6 +67,7 @@ class FolderFragment : Fragment() {
             binding.textRepo.text = repo.base.name
             binding.textFolder.text = folder.path.path
             binding.textSchedule.text = folder.schedule
+            binding.textSchedNotBefore.text = folder.schedTimeNotBefore
             binding.textRetain.text = listOf(
                 "Everything",
                 listOf(
