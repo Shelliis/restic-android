@@ -99,11 +99,6 @@ class SnapshotFragment : Fragment() {
                                         binding.progressDl
                                     )
 
-                                    binding.listFilesSnapshot.onItemClickListener =
-                                        AdapterView.OnItemClickListener { _, _, _, _ ->
-                                            (binding.listFilesSnapshot.adapter as SnapshotFilesListAdapter)
-                                                .triggerSort(binding.listFilesSnapshot)
-                                        }
                                 } else {
                                     throwable?.printStackTrace()
                                 }
@@ -155,6 +150,7 @@ class SnapshotFragment : Fragment() {
                     .show()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -187,10 +183,12 @@ class SnapshotFilesListAdapter(
                 sortedFiles.sortByDescending { it.mtime }
                 true
             }
+
             true -> {
                 sortedFiles.sortBy { it.mtime }
                 false
             }
+
             false -> {
                 sortedFiles = ArrayList(files)
                 null
@@ -229,7 +227,7 @@ class SnapshotFilesListAdapter(
         holder.fileDateText.text = dateString
 
         // Add a click listener to initiate download
-        holder.itemView.setOnClickListener {
+        holder.pathNameText.setOnClickListener {
             if (file.type == "file") {
                 // Path where the downloaded file will be saved on the device
                 val sharedPref = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -245,7 +243,13 @@ class SnapshotFilesListAdapter(
                 } else {
                     AlertDialog.Builder(context)
                         .setTitle(R.string.alert_download_file_title)
-                        .setMessage(context.getString(R.string.alert_download_file_message, file.path.name, downloadPathString))
+                        .setMessage(
+                            context.getString(
+                                R.string.alert_download_file_message,
+                                file.path.name,
+                                downloadPathString
+                            )
+                        )
                         .setPositiveButton(android.R.string.ok) { _, _ ->
                             downloadFile(file, downloadPath)
                         }
@@ -253,6 +257,10 @@ class SnapshotFilesListAdapter(
                         .show()
                 }
             }
+        }
+        holder.fileDateText.setOnClickListener{
+            val v = it.parent.parent as ListView
+            triggerSort(v)
         }
 
         return view
@@ -277,7 +285,7 @@ class SnapshotFilesListAdapter(
                     }
                     progressDl.visibility = GONE
                 }
-        }
+            }
     }
 
     private fun showToast(message: String) {
