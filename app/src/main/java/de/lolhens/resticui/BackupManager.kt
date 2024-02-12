@@ -14,6 +14,7 @@ import de.lolhens.resticui.restic.ResticNameServers
 import de.lolhens.resticui.restic.ResticStorage
 import de.lolhens.resticui.ui.folder.FolderActivity
 import de.lolhens.resticui.util.HostnameUtil
+import de.lolhens.resticui.util.Logger
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.util.concurrent.CompletableFuture
@@ -86,6 +87,8 @@ class BackupManager private constructor(context: Context) {
     val notificationChannelId = "RESTIC_BACKUP_PROGRESS"
     private var lastMillis = 0L
 
+    private val TAG = "Notification";
+
     private fun updateNotification(
         context: Context,
         folderConfigId: FolderConfigId,
@@ -99,7 +102,13 @@ class BackupManager private constructor(context: Context) {
             FolderActivity.intent(context, false, folderConfigId),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-
+        var contentTitle = ""
+        for (folder in config.folders) {
+            if (folder.id == folderConfigId) {
+                contentTitle = "${folder.path}"
+                break
+            }
+        }
         when {
             activeBackup.inProgress -> {
                 // reduce number of notification updates
@@ -110,13 +119,14 @@ class BackupManager private constructor(context: Context) {
                     lastMillis = nowMillis
 
                 val progress = activeBackup.progress?.percentDoneString() ?: "0%"
+                Logger.d(TAG+":inProgress", progress);
 
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
                         .setContentIntent(pendingIntent())
                         .setSubText(progress)
-                        .setContentTitle("${context.resources.getString(R.string.notification_backup_progress_message)} $progress")
+                        .setContentTitle("${contentTitle}")
                         .setContentText(
                             if (activeBackup.progress == null) null
                             else "${activeBackup.progress.timeElapsedString()} elapsed"
@@ -132,6 +142,7 @@ class BackupManager private constructor(context: Context) {
                 )
             }
             activeBackup.error != null && errorNotification -> {
+                Logger.d(TAG+":error", "${context.resources.getString(R.string.notification_backup_failed_message)}\n${activeBackup.error}");
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
@@ -144,29 +155,23 @@ class BackupManager private constructor(context: Context) {
                 )
             }
             activeBackup.summary != null && doneNotification -> {
-                var contentTitle = ""
-                for (folder in config.folders) {
-                    if (folder.id == folderConfigId) {
-                        contentTitle = "${folder.path}"
-                        break
-                    }
-                }
                 val details = if (activeBackup.progress == null) "" else {
                     val ofTotal =
                         if (activeBackup.progress.total_files != null) "/${activeBackup.progress.total_files}" else ""
 
                     val unmodifiedNewChanged = listOf(
-                        if (activeBackup.summary.files_unmodified != 0L) "U:${activeBackup.summary.files_unmodified}" else "",
-                        if (activeBackup.summary.files_unmodified != 0L) "N:${activeBackup.summary.files_new}" else "",
-                        if (activeBackup.summary.files_unmodified != 0L) "C:${activeBackup.summary.files_changed}" else ""
+                        if (activeBackup.summary.files_unmodified != 0L) "U:${activeBackup.summary.files_unmodified}" else "U:0",
+                        if (activeBackup.summary.files_unmodified != 0L) "N:${activeBackup.summary.files_new}" else "N:${ofTotal}",
+                        if (activeBackup.summary.files_unmodified != 0L) "C:${activeBackup.summary.files_changed}" else "C:0"
                     ).filter { it.isNotEmpty() }.joinToString("/")
 
                     listOf(
                         activeBackup.progress.timeElapsedString(),
-                        "${activeBackup.progress.files_done}$ofTotal Files ($unmodifiedNewChanged)",
+                        "${activeBackup.progress.files_done}$ofTotal ($unmodifiedNewChanged)",
                         "${activeBackup.progress.bytesDoneString()}${if (activeBackup.progress.total_bytes != null) "/${activeBackup.progress.totalBytesString()}" else ""}"
                     ).joinToString(" | ")
                 }
+                Logger.d(TAG+":summary", details );
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
