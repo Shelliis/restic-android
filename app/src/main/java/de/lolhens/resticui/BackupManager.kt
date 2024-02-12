@@ -87,7 +87,7 @@ class BackupManager private constructor(context: Context) {
     val notificationChannelId = "RESTIC_BACKUP_PROGRESS"
     private var lastMillis = 0L
 
-    private val TAG = "Notification";
+    private val TAG = "Notification"
 
     private fun updateNotification(
         context: Context,
@@ -119,14 +119,14 @@ class BackupManager private constructor(context: Context) {
                     lastMillis = nowMillis
 
                 val progress = activeBackup.progress?.percentDoneString() ?: "0%"
-                Logger.d(TAG+":inProgress", progress);
+                Logger.d(TAG+":inProgress", progress)
 
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
                         .setContentIntent(pendingIntent())
                         .setSubText(progress)
-                        .setContentTitle("${contentTitle}")
+                        .setContentTitle(contentTitle)
                         .setContentText(
                             if (activeBackup.progress == null) null
                             else "${activeBackup.progress.timeElapsedString()} elapsed"
@@ -142,7 +142,7 @@ class BackupManager private constructor(context: Context) {
                 )
             }
             activeBackup.error != null && errorNotification -> {
-                Logger.d(TAG+":error", "${context.resources.getString(R.string.notification_backup_failed_message)}\n${activeBackup.error}");
+                Logger.d(TAG+":error", "${context.resources.getString(R.string.notification_backup_failed_message)}\n${activeBackup.error}")
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
@@ -171,7 +171,7 @@ class BackupManager private constructor(context: Context) {
                         "${activeBackup.progress.bytesDoneString()}${if (activeBackup.progress.total_bytes != null) "/${activeBackup.progress.totalBytesString()}" else ""}"
                     ).joinToString(" | ")
                 }
-                Logger.d(TAG+":summary", details );
+                Logger.d(TAG+":summary", details )
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
