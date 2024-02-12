@@ -102,13 +102,6 @@ class BackupManager private constructor(context: Context) {
             FolderActivity.intent(context, false, folderConfigId),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
-        var contentTitle = ""
-        for (folder in config.folders) {
-            if (folder.id == folderConfigId) {
-                contentTitle = "${folder.path}"
-                break
-            }
-        }
         when {
             activeBackup.inProgress -> {
                 // reduce number of notification updates
@@ -121,6 +114,13 @@ class BackupManager private constructor(context: Context) {
                 val progress = activeBackup.progress?.percentDoneString() ?: "0%"
                 Logger.d(TAG+":inProgress", progress)
 
+                var contentTitle = ""
+                for (folder in config.folders) {
+                    if (folder.id == folderConfigId) {
+                        contentTitle = "${folder.path}"
+                        break
+                    }
+                }
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
@@ -172,6 +172,13 @@ class BackupManager private constructor(context: Context) {
                     ).joinToString(" | ")
                 }
                 Logger.d(TAG+":summary", details )
+                var contentTitle = ""
+                for (folder in config.folders) {
+                    if (folder.id == folderConfigId) {
+                        contentTitle = "${folder.path}"
+                        break
+                    }
+                }
                 notificationManager(context).notify(
                     activeBackup.notificationId,
                     NotificationCompat.Builder(context, notificationChannelId)
