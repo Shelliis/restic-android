@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import de.lolhens.resticui.BackupManager
-import de.lolhens.resticui.BuildConfig
 import de.lolhens.resticui.databinding.FragmentAboutBinding
 
 class AboutFragment : Fragment() {
@@ -46,9 +45,6 @@ class AboutFragment : Fragment() {
                 it.printStackTrace()
                 null
             }
-
-        val textUiView: TextView = binding.textResticuiVersion
-        textUiView.text = "GIT: " + BuildConfig.BUILD
 
         return root
     }
