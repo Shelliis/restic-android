@@ -28,7 +28,7 @@ android {
                 "restic-android",
                 getVersionOrNull()?.toString()
         ].findAll({ it != null }).join("-"))
-
+        buildConfigField "String", "BUILD", "\"" + project.getVersionCode() + "\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
