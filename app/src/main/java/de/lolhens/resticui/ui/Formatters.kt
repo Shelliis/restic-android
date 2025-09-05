@@ -10,10 +10,10 @@ object Formatters {
     private val dateTimeShortFormatter = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm:ss")
 
     fun dateTime(dateTime: ZonedDateTime): String =
-        dateTime.withZoneSameInstant(ZoneId.systemDefault()).format(dateTimeFormatter)
+        dateTime.withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(dateTimeFormatter)
 
     fun dateTimeShort(dateTime: ZonedDateTime): String =
-        dateTime.withZoneSameInstant(ZoneId.systemDefault()).format(dateTimeShortFormatter)
+        dateTime.withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(dateTimeShortFormatter)
 
     fun durationDaysHours(duration: Duration) = when {
         duration.toHours() < 24 -> "${duration.toHours()} hours"
